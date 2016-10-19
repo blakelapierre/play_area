@@ -1,0 +1,50 @@
+<style>body { padding: 0; margin: 0; }</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var canvas = document.createElement('canvas'),
+        context = canvas.getContext('2d');
+
+    canvas.width = document.body.clientWidth;
+    canvas.height = document.body.clientHeight;
+    document.body.appendChild(canvas);
+
+    var image = new ImageData(canvas.width, canvas.height);
+
+    for (var x = 0; x < canvas.width; x++) {
+      for (var y = 0; y < canvas.height; y++) {
+        for (var c = 0; c < 4; c++) {
+          image.data[c + 4*x + 4*y*canvas.width] = sample(x, y, c);
+        }
+      }
+    }
+
+    context.putImageData(image, 0, 0);
+
+    window.requestAnimationFrame(animate);
+
+    function sample(x, y, c) { return Math.round(Math.random() * 255); }
+
+    function animate() {
+      var part = 0;
+      for (var i = 0; i < image.data.length + 1; i++) {
+        half = image.data[Math.min(image.data.length - 1, i)] / 2;
+
+        image.data[i] = part;
+
+        image.data[Math.min(image.data.length - 1, Math.max(0, i - 1))] += half;
+
+        part = half;
+
+        // half = image.data[Math.min(image.data.length - 1, i)] / 2;
+
+        // image.data[i] = 0;
+
+        // image.data[Math.min(image.data.length - 1, Math.max(0, i - 1))] += half;
+      }
+
+      context.putImageData(image, 0, 0);
+
+      setTimeout(function() {window.requestAnimationFrame(animate);}, 60/1000);
+    }
+  });
+</script>

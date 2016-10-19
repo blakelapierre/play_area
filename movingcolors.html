@@ -4,6 +4,11 @@
     var canvas = document.createElement('canvas'),
         context = canvas.getContext('2d');
 
+    canvas.addEventListener('click', function() {
+      shouldAnimate = !shouldAnimate;
+      if (shouldAnimate) window.requestAnimationFrame(animate);
+    });
+
     canvas.width = document.body.clientWidth;
     canvas.height = document.body.clientHeight;
     document.body.appendChild(canvas);
@@ -20,11 +25,22 @@
 
     context.putImageData(image, 0, 0);
 
+    var shouldAnimate = true;
+
     window.requestAnimationFrame(animate);
 
     function sample(x, y, c) { return Math.round(Math.random() * 255); }
 
     function animate() {
+      halfToEitherSide();
+
+      context.putImageData(image, 0, 0);
+
+      if (shouldAnimate) window.requestAnimationFrame(animate);
+    }
+
+
+    function halfToEitherSide() {
       var part = 0;
       for (var i = 0; i < image.data.length + 1; i++) {
         half = image.data[Math.min(image.data.length - 1, i)] / 2;
@@ -41,10 +57,6 @@
 
         // image.data[Math.min(image.data.length - 1, Math.max(0, i - 1))] += half;
       }
-
-      context.putImageData(image, 0, 0);
-
-      setTimeout(function() {window.requestAnimationFrame(animate);}, 60/1000);
     }
   });
 </script>
